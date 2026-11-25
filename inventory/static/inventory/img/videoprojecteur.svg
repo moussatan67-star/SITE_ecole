@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="Illustration vidéoprojecteur">
+  <rect width="320" height="220" rx="16" fill="#0099FF" fill-opacity="0.1"/>
+  <polygon points="222,108 300,66 300,154" fill="#0099FF" fill-opacity="0.22"/>
+  <rect x="38" y="72" width="194" height="84" rx="14" fill="#07243D" stroke="#0099FF" stroke-width="4"/>
+  <circle cx="182" cy="114" r="28" fill="#FDFDFE" stroke="#0099FF" stroke-width="5"/>
+  <circle cx="182" cy="114" r="14" fill="#0099FF"/>
+  <circle cx="182" cy="114" r="6" fill="#F42902"/>
+  <rect x="60" y="94" width="64" height="8" rx="4" fill="#FDFDFE" fill-opacity="0.7"/>
+  <rect x="60" y="110" width="48" height="8" rx="4" fill="#FDFDFE" fill-opacity="0.5"/>
+  <circle cx="72" cy="134" r="6" fill="#F42902"/>
+  <rect x="68" y="156" width="20" height="14" rx="4" fill="#07243D"/>
+  <rect x="186" y="156" width="20" height="14" rx="4" fill="#07243D"/>
+</svg>

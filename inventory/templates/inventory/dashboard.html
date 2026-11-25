@@ -1,0 +1,171 @@
+{% extends "inventory/base.html" %}
+
+{% block title %}Tableau de bord — ISEP Inventory{% endblock %}
+
+{% block content %}
+<section class="dashboard-hero mb-4 mb-lg-5">
+    <div class="dashboard-hero-copy">
+        <span class="dashboard-eyebrow"><i class="bi bi-grid-1x2-fill me-2"></i>GESTION DU PARC INFORMATIQUE</span>
+        <h1>Tout votre matériel,<br class="d-none d-md-block"> en un coup d’œil.</h1>
+        <p>Suivez l’état de vos équipements et repérez rapidement ceux qui nécessitent votre attention.</p>
+    </div>
+    <div class="dashboard-hero-actions">
+        <a href="{% url 'inventory:equipement_list' %}" class="btn btn-outline-light">
+            <i class="bi bi-grid me-2"></i>Voir l’inventaire
+        </a>
+        <a href="{% url 'inventory:equipement_create' %}" class="btn btn-light">
+            <i class="bi bi-plus-lg me-2"></i>Ajouter un équipement
+        </a>
+    </div>
+</section>
+
+<!-- Cartes de statistiques calculées via l'ORM -->
+<div class="dashboard-section-heading">
+    <div>
+        <h2 class="h5 mb-1">Vue d’ensemble</h2>
+        <p class="mb-0">Les chiffres clés de votre inventaire</p>
+    </div>
+</div>
+<div class="row g-3 g-xl-4 mb-4 mb-lg-5">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card stat-card stat-card-total h-100">
+            <div class="card-body d-flex justify-content-between align-items-center p-3 p-lg-4">
+                <div>
+                    <p class="stat-label mb-1">Total</p>
+                    <p class="stat-value mb-0">{{ total_equipements }}</p>
+                    <p class="stat-note mb-0">Équipements recensés</p>
+                </div>
+                <div class="stat-icon">
+                    <i class="bi bi-boxes"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card stat-card stat-card-available h-100">
+            <div class="card-body d-flex justify-content-between align-items-center p-3 p-lg-4">
+                <div>
+                    <p class="stat-label mb-1">Disponibles</p>
+                    <p class="stat-value mb-0">{{ nb_disponibles }}</p>
+                    <p class="stat-note mb-0">Prêts à l’utilisation</p>
+                </div>
+                <div class="stat-icon">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card stat-card stat-card-broken h-100">
+            <div class="card-body d-flex justify-content-between align-items-center p-3 p-lg-4">
+                <div>
+                    <p class="stat-label mb-1">En panne</p>
+                    <p class="stat-value mb-0">{{ nb_en_panne }}</p>
+                    <p class="stat-note mb-0">À vérifier</p>
+                </div>
+                <div class="stat-icon">
+                    <i class="bi bi-exclamation-octagon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card stat-card stat-card-maintenance h-100">
+            <div class="card-body d-flex justify-content-between align-items-center p-3 p-lg-4">
+                <div>
+                    <p class="stat-label mb-1">En maintenance</p>
+                    <p class="stat-value mb-0">{{ nb_en_maintenance }}</p>
+                    <p class="stat-note mb-0">Suivi technique en cours</p>
+                </div>
+                <div class="stat-icon">
+                    <i class="bi bi-wrench-adjustable-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tableau des 5 derniers équipements ajoutés -->
+<div class="card recent-equipment-card">
+    <div class="card-header recent-equipment-header d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 py-3 px-4">
+        <div class="recent-equipment-heading">
+            <span class="recent-equipment-eyebrow">ACTIVITÉ RÉCENTE</span>
+            <h2 class="h5 fw-semibold mb-0">
+                <span class="recent-equipment-heading-icon"><i class="bi bi-clock-history"></i></span>
+                Derniers équipements ajoutés
+            </h2>
+        </div>
+        <a href="{% url 'inventory:equipement_list' %}" class="small fw-medium">
+            Consulter l'inventaire complet <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+    <div class="card-body p-0">
+        {% if derniers_equipements %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 inventory-table">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">ID</th>
+                            <th>Code</th>
+                            <th>Désignation</th>
+                            <th>Catégorie</th>
+                            <th>Salle</th>
+                            <th>État</th>
+                            <th class="text-end pe-4">Fiche</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for equipement in derniers_equipements %}
+                            <tr>
+                                <td class="ps-4 fw-semibold">
+                                    <a href="{% url 'inventory:equipement_detail' equipement.pk %}" title="Voir les détails et l'image">
+                                        <span class="inventory-code">#{{ equipement.pk }}</span>
+                                    </a>
+                                </td>
+                                <td class="fw-semibold">
+                                    <a href="{% url 'inventory:equipement_detail' equipement.pk %}">
+                                        <span class="inventory-code">{{ equipement.code_inventaire }}</span>
+                                    </a>
+                                </td>
+                                <td>{{ equipement.designation }}</td>
+                                <td>{{ equipement.get_categorie_display }}</td>
+                                <td>{{ equipement.salle }}</td>
+                                <td>
+                                    {% if equipement.etat == 'Disponible' %}
+                                        <span class="badge badge-etat badge-etat-disponible">
+                                            <i class="bi bi-check-circle me-1"></i>{{ equipement.get_etat_display }}
+                                        </span>
+                                    {% elif equipement.etat == 'En panne' %}
+                                        <span class="badge badge-etat badge-etat-panne">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>{{ equipement.get_etat_display }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge badge-etat badge-etat-maintenance">
+                                            <i class="bi bi-tools me-1"></i>{{ equipement.get_etat_display }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a href="{% url 'inventory:equipement_detail' equipement.pk %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye me-1"></i>Détails
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="p-4">
+                <div class="alert alert-info mb-0 d-flex align-items-center gap-2" role="alert">
+                    <i class="bi bi-info-circle"></i>
+                    <span>Aucun équipement n'est encore enregistré dans la base de données.</span>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

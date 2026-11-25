@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="Illustration autre équipement">
+  <rect width="320" height="220" rx="16" fill="#0099FF" fill-opacity="0.1"/>
+  <rect x="92" y="34" width="136" height="152" rx="14" fill="#07243D" stroke="#0099FF" stroke-width="4"/>
+  <rect x="114" y="56" width="92" height="44" rx="8" fill="#0099FF" fill-opacity="0.25" stroke="#0099FF" stroke-width="2"/>
+  <path d="M164 64l-14 16h12l-4 14 14-16h-12l4-14z" fill="#F42902"/>
+  <rect x="118" y="118" width="84" height="10" rx="5" fill="#FDFDFE"/>
+  <rect x="118" y="138" width="60" height="10" rx="5" fill="#FDFDFE" fill-opacity="0.65"/>
+  <circle cx="160" cy="164" r="7" fill="#F42902"/>
+</svg>

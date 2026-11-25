@@ -1,0 +1,168 @@
+{% extends "inventory/base.html" %}
+
+{% block title %}Liste des équipements — ISEP Inventory{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h1 class="h2 fw-bold mb-1">Équipements</h1>
+        <p class="text-secondary-custom mb-0">
+            {{ equipements|length }} équipement{{ equipements|length|pluralize }} affiché{{ equipements|length|pluralize }}
+        </p>
+    </div>
+    <a href="{% url 'inventory:equipement_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>Ajouter un équipement
+    </a>
+</div>
+
+<!-- Formulaire de recherche et de filtrage (GET) -->
+<div class="card mb-4">
+    <div class="card-body p-4">
+        <form method="get" action="{% url 'inventory:equipement_list' %}" class="row g-3 align-items-end">
+            <div class="col-12 col-lg-4">
+                <label for="search-q" class="form-label fw-medium">Recherche</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input
+                        type="text"
+                        id="search-q"
+                        name="q"
+                        value="{{ q }}"
+                        class="form-control"
+                        placeholder="Désignation ou code (ex. INV-001)"
+                    >
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-3">
+                <label for="filter-categorie" class="form-label fw-medium">Catégorie</label>
+                <select id="filter-categorie" name="categorie" class="form-select">
+                    <option value="">Toutes les catégories</option>
+                    {% for valeur, libelle in categories %}
+                        <option value="{{ valeur }}" {% if categorie_selected == valeur %}selected{% endif %}>
+                            {{ libelle }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-3">
+                <label for="filter-etat" class="form-label fw-medium">État</label>
+                <select id="filter-etat" name="etat" class="form-select">
+                    <option value="">Tous les états</option>
+                    {% for valeur, libelle in etats %}
+                        <option value="{{ valeur }}" {% if etat_selected == valeur %}selected{% endif %}>
+                            {{ libelle }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-12 col-lg-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1">
+                    <i class="bi bi-funnel me-1"></i>Filtrer
+                </button>
+                <a href="{% url 'inventory:equipement_list' %}" class="btn btn-outline-primary" title="Réinitialiser les filtres">
+                    Réinitialiser
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tableau des résultats -->
+{% if equipements %}
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 inventory-table">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">ID</th>
+                            <th>Code</th>
+                            <th>Désignation</th>
+                            <th>Catégorie</th>
+                            <th>Marque</th>
+                            <th>Salle</th>
+                            <th>Acquisition</th>
+                            <th>État</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for equipement in equipements %}
+                            <tr>
+                                <td class="ps-4 fw-semibold">
+                                    <a href="{% url 'inventory:equipement_detail' equipement.pk %}" title="Voir les détails et l'image">
+                                        <span class="inventory-code">#{{ equipement.pk }}</span>
+                                    </a>
+                                </td>
+                                <td class="fw-semibold">
+                                    <a href="{% url 'inventory:equipement_detail' equipement.pk %}">
+                                        <span class="inventory-code">{{ equipement.code_inventaire }}</span>
+                                    </a>
+                                </td>
+                                <td>{{ equipement.designation }}</td>
+                                <td>{{ equipement.get_categorie_display }}</td>
+                                <td>{{ equipement.marque }}</td>
+                                <td>{{ equipement.salle }}</td>
+                                <td>{{ equipement.date_acquisition|date:"d/m/Y" }}</td>
+                                <td>
+                                    {% if equipement.etat == 'Disponible' %}
+                                        <span class="badge badge-etat badge-etat-disponible">
+                                            <i class="bi bi-check-circle me-1"></i>{{ equipement.get_etat_display }}
+                                        </span>
+                                    {% elif equipement.etat == 'En panne' %}
+                                        <span class="badge badge-etat badge-etat-panne">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>{{ equipement.get_etat_display }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge badge-etat badge-etat-maintenance">
+                                            <i class="bi bi-tools me-1"></i>{{ equipement.get_etat_display }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-inline-flex gap-1">
+                                        <a href="{% url 'inventory:equipement_detail' equipement.pk %}" class="btn btn-sm btn-outline-primary" title="Détails">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'inventory:equipement_update' equipement.pk %}" class="btn btn-sm btn-outline-primary" title="Modifier">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'inventory:equipement_delete' equipement.pk %}" class="btn btn-sm btn-danger" title="Supprimer">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="alert alert-warning d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3" role="alert">
+        <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-search fs-5"></i>
+            <div>
+                {% if filtres_actifs %}
+                    Aucun équipement ne correspond aux critères de recherche sélectionnés.
+                {% else %}
+                    Aucun équipement enregistré pour le moment.
+                {% endif %}
+            </div>
+        </div>
+        {% if filtres_actifs %}
+            <a href="{% url 'inventory:equipement_list' %}" class="btn btn-sm btn-outline-primary">
+                Réinitialiser la recherche
+            </a>
+        {% else %}
+            <a href="{% url 'inventory:equipement_create' %}" class="btn btn-sm btn-primary">
+                Ajouter un premier équipement
+            </a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}

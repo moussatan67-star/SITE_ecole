@@ -1,0 +1,137 @@
+{% extends "inventory/base.html" %}
+{% load static %}
+
+{% block title %}{{ equipement.code_inventaire }} — ISEP Inventory{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <a href="{% url 'inventory:equipement_list' %}" class="small fw-medium">
+                    <i class="bi bi-arrow-left me-1"></i>Retour à la liste
+                </a>
+                <h1 class="h2 fw-bold mt-2 mb-1">{{ equipement.designation }}</h1>
+                <p class="text-secondary-custom mb-0">
+                    ID : <span class="fw-semibold">#{{ equipement.pk }}</span> ·
+                    Code d'inventaire : <span class="fw-semibold">{{ equipement.code_inventaire }}</span>
+                </p>
+            </div>
+
+            <div class="d-flex gap-2">
+                <a href="{% url 'inventory:equipement_update' equipement.pk %}" class="btn btn-primary">
+                    <i class="bi bi-pencil me-1"></i>Modifier
+                </a>
+                <a href="{% url 'inventory:equipement_delete' equipement.pk %}" class="btn btn-danger">
+                    <i class="bi bi-trash me-1"></i>Supprimer
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Image de l'équipement -->
+            <div class="col-12 col-lg-5">
+                <div class="card h-100">
+                    <div class="card-header py-3 px-4">
+                        <span class="fw-semibold">
+                            <i class="bi bi-image me-2 text-accent"></i>Aperçu de l'équipement
+                        </span>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column justify-content-between gap-3">
+                        <div class="equipement-img-wrapper">
+                            {% if equipement.image %}
+                                <img
+                                    src="{{ equipement.image.url }}"
+                                    alt="Photo de {{ equipement.designation }}"
+                                    class="equipement-detail-img img-fluid"
+                                >
+                            {% else %}
+                                <img
+                                    src="{% static equipement.default_image_path %}"
+                                    alt="Illustration de {{ equipement.designation }}"
+                                    class="equipement-detail-img img-fluid"
+                                >
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center small text-secondary-custom">
+                            <span>
+                                {% if equipement.image %}
+                                    <i class="bi bi-camera me-1 text-accent"></i>Photo enregistrée
+                                {% else %}
+                                    <i class="bi bi-diagram-3 me-1 text-accent"></i>Visuel catégorie : {{ equipement.get_categorie_display }}
+                                {% endif %}
+                            </span>
+                            <a href="{% url 'inventory:equipement_update' equipement.pk %}" class="fw-medium">
+                                Changer l'image
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations détaillées -->
+            <div class="col-12 col-lg-7">
+                <div class="card h-100">
+                    <div class="card-header py-3 px-4 d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">
+                            <i class="bi bi-info-square me-2 text-accent"></i>Informations détaillées
+                        </span>
+                        {% if equipement.etat == 'Disponible' %}
+                            <span class="badge badge-etat badge-etat-disponible">
+                                <i class="bi bi-check-circle me-1"></i>{{ equipement.get_etat_display }}
+                            </span>
+                        {% elif equipement.etat == 'En panne' %}
+                            <span class="badge badge-etat badge-etat-panne">
+                                <i class="bi bi-exclamation-triangle me-1"></i>{{ equipement.get_etat_display }}
+                            </span>
+                        {% else %}
+                            <span class="badge badge-etat badge-etat-maintenance">
+                                <i class="bi bi-tools me-1"></i>{{ equipement.get_etat_display }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body p-4">
+                        <dl class="row g-3 mb-0">
+                            <dt class="col-sm-5 text-secondary-custom">Identifiant (ID)</dt>
+                            <dd class="col-sm-7 fw-semibold">#{{ equipement.pk }}</dd>
+
+                            <dt class="col-sm-5 text-secondary-custom">Code d'inventaire</dt>
+                            <dd class="col-sm-7 fw-semibold">{{ equipement.code_inventaire }}</dd>
+
+                            <dt class="col-sm-5 text-secondary-custom">Désignation</dt>
+                            <dd class="col-sm-7">{{ equipement.designation }}</dd>
+
+                            <dt class="col-sm-5 text-secondary-custom">Catégorie</dt>
+                            <dd class="col-sm-7">{{ equipement.get_categorie_display }}</dd>
+
+                            <dt class="col-sm-5 text-secondary-custom">Marque</dt>
+                            <dd class="col-sm-7">{{ equipement.marque }}</dd>
+
+                            <dt class="col-sm-5 text-secondary-custom">Numéro de série</dt>
+                            <dd class="col-sm-7">
+                                {{ equipement.numero_serie|default:"Non renseigné" }}
+                            </dd>
+
+                            <dt class="col-sm-5 text-secondary-custom">Date d'acquisition</dt>
+                            <dd class="col-sm-7">{{ equipement.date_acquisition|date:"d/m/Y" }}</dd>
+
+                            <dt class="col-sm-5 text-secondary-custom">Salle / Emplacement</dt>
+                            <dd class="col-sm-7">{{ equipement.salle }}</dd>
+
+                            <dt class="col-sm-5 text-secondary-custom">Détails techniques</dt>
+                            <dd class="col-sm-7 mb-0">
+                                {% if equipement.observations %}
+                                    {{ equipement.observations|linebreaksbr }}
+                                {% else %}
+                                    <span class="text-secondary-custom">Aucune observation enregistrée.</span>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

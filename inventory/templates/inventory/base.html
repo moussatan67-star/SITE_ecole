@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ISEP Inventory{% endblock %}</title>
+
+    <!-- Typographies : Inter pour le texte, Manrope pour les titres -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5.3 CSS & Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <!-- Thème personnalisé -->
+    <link rel="stylesheet" href="{% static 'inventory/css/style.css' %}">
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Barre de navigation principale -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'inventory:dashboard' %}">
+                <img src="{% static 'inventory/img/isep-logo.png' %}" alt="" class="navbar-brand-logo" width="62" height="40">
+                <span>ISEP Inventory</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Afficher la navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3 gap-lg-2">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'inventory:dashboard' %}">
+                            <i class="bi bi-speedometer2 me-1"></i>Tableau de bord
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name in 'equipement_list,equipement_detail,equipement_update,equipement_delete' %}active{% endif %}" href="{% url 'inventory:equipement_list' %}">
+                            <i class="bi bi-hdd-stack me-1"></i>Équipements
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="d-flex">
+                    <a class="btn btn-primary" href="{% url 'inventory:equipement_create' %}">
+                        <i class="bi bi-plus-circle me-1"></i>Ajouter
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="flex-grow-1 py-4 py-md-5">
+        <div class="container">
+            {% if messages %}
+                <div class="mb-4" aria-live="polite">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
+                            <i class="bi bi-info-circle-fill flex-shrink-0"></i>
+                            <div class="flex-grow-1">{{ message }}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Pied de page -->
+    <footer class="footer py-3 mt-auto">
+        <div class="container d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+            <span class="small text-secondary-custom">
+                <i class="bi bi-shield-check me-1 text-accent"></i>ISEP Inventory — Gestion du parc informatique
+            </span>
+            <span class="small text-secondary-custom">
+                Dakar, Sénégal
+            </span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5.3 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
